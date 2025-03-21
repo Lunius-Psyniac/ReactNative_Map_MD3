@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -26,10 +27,24 @@ const Stack = createStackNavigator();
 function HomeScreen({ navigation }) {
   const [location, setLocation] = useState(null);
   const [weather, setWeather] = useState(null);
+=======
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Button, Modal, ActivityIndicator, Alert, useWindowDimensions } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+
+const API_KEY = "7b8c25a46d8f15fa29fe8ee42bee0d6b";
+
+export default function App() {
+  const [location, setLocation] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
   const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     (async () => {
+<<<<<<< HEAD
       if (Platform.OS === 'web') {
         // Web location handling
         if ('geolocation' in navigator) {
@@ -87,6 +102,47 @@ function HomeScreen({ navigation }) {
       Alert.alert('Error', 'Failed to fetch weather data.');
     }
   };
+=======
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Denied", "Allow location access to use this app.");
+        return;
+      }
+
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords);
+      fetchWeather(loc.coords.latitude, loc.coords.longitude);
+    })();
+  }, []);
+
+const fetchWeather = async (lat, lon) => {
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    console.log("Fetching weather from:", url);
+    
+    let response = await fetch(url);
+    let data = await response.json();
+    
+    if (response.ok) {
+      setWeather({
+        name: data.name,
+        lat: lat.toFixed(2),
+        lon: lon.toFixed(2),
+        temp: data.main.temp,
+        pressure: data.main.pressure,
+        humidity: data.main.humidity,
+        description: data.weather[0].description,
+      });
+    } else {
+      console.log("Error from API:", data);
+      Alert.alert("Error", data.message || "Failed to fetch weather data.");
+    }
+  } catch (error) {
+    console.error("Fetch error:", error);
+    Alert.alert("Error", "Failed to fetch weather data.");
+  }
+};
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
 
   return (
     <View style={styles.container}>
@@ -99,6 +155,7 @@ function HomeScreen({ navigation }) {
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           }}
+<<<<<<< HEAD
           scrollEnabled={true}
           zoomEnabled={true}>
           <Marker
@@ -108,21 +165,52 @@ function HomeScreen({ navigation }) {
             }}
             title="You are here"
           />
+=======
+        >
+          <Marker coordinate={{ latitude: location.latitude, longitude: location.longitude }} title="You are here" />
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
         </MapView>
       ) : (
         <ActivityIndicator size="large" color="blue" />
       )}
 
       <View style={styles.buttonContainer}>
+<<<<<<< HEAD
         <Button
           title="Weather"
           onPress={() => navigation.navigate('Weather', { weather })}
         />
       </View>
+=======
+        <Button title="Weather" onPress={() => setModalVisible(true)} />
+      </View>
+
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {weather ? (
+              <>
+                <Text style={styles.modalTitle}>{weather.name}</Text>
+                <Text>Latitude: {weather.lat}</Text>
+                <Text>Longitude: {weather.lon}</Text>
+                <Text>Temperature: {weather.temp}°C</Text>
+                <Text>Pressure: {weather.pressure} hPa</Text>
+                <Text>Humidity: {weather.humidity}%</Text>
+                <Text>Description: {weather.description}</Text>
+              </>
+            ) : (
+              <ActivityIndicator size="large" color="blue" />
+            )}
+            <Button title="Close" onPress={() => setModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
     </View>
   );
 }
 
+<<<<<<< HEAD
 function WeatherScreen({ route, navigation }) {
   const weather = route.params.weather;
 
@@ -176,19 +264,29 @@ export default function App() {
   );
 }
 
+=======
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   buttonContainer: {
+<<<<<<< HEAD
     position: 'absolute',
     top: 40,
     right: 10,
     backgroundColor: 'white',
+=======
+    position: "absolute",
+    top: 40,
+    right: 10,
+    backgroundColor: "white",
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
     borderRadius: 5,
     padding: 5,
     elevation: 5,
   },
+<<<<<<< HEAD
   weatherOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -218,5 +316,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 5,
     textAlign: 'center',
+=======
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+>>>>>>> 138d4b9badc1fa5d99bf28103e11d5fc54d2aa1b
   },
 });
